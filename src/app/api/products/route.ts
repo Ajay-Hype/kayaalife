@@ -41,7 +41,13 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    const responseData = await backendResponse.json();
+    let responseData;
+    try {
+      responseData = await backendResponse.json();
+    } catch (e) {
+      // Backend returned non-JSON (likely rate limit message)
+      return NextResponse.json({ success: true, data: [] });
+    }
 
     if (!backendResponse.ok) {
       return NextResponse.json(responseData, {

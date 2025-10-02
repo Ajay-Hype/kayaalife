@@ -15,6 +15,7 @@ const productRoutes = require('./routes/products');
 const customerRoutes = require('./routes/customers');
 const categoryRoutes = require('./routes/categories');
 const menuManagementRoutes = require('./routes/menuManagement');
+const publicRoutes = require('./routes/public');
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/menu-management', menuManagementRoutes);
+app.use('/api/public', publicRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

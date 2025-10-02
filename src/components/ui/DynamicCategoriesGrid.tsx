@@ -60,7 +60,7 @@ export default function DynamicCategoriesGrid({
         {/* Loading skeleton */}
         <div className={`grid ${gridCols} gap-6`}>
           {[...Array(maxDisplay)].map((_, i) => (
-            <div key={i} className="text-center animate-pulse">
+            <div key={`skeleton-${i}`} className="text-center animate-pulse">
               <div className="bg-gray-200 rounded-full w-20 h-20 mx-auto mb-3"></div>
               <div className="h-4 bg-gray-200 rounded w-16 mx-auto mb-2"></div>
               <div className="h-3 bg-gray-200 rounded w-12 mx-auto"></div>
@@ -119,7 +119,7 @@ export default function DynamicCategoriesGrid({
       <div className={`grid ${gridCols} gap-6`}>
         {displayCategories.map((category, index) => (
           <Link
-            key={category._id || category.id}
+            key={category._id || category.id || `category-${index}`}
             href={`/${category.slug}`}
             className="group text-center transform transition-all duration-300 hover:scale-105"
           >

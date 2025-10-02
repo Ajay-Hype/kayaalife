@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Product } from '@/types';
 import { apiService } from '@/lib/api';
-import { mapBackendToFrontend, mapFrontendToBackend } from '@/lib/dataMapper';
+import { mapFrontendToBackend } from '@/lib/dataMapper';
 
 export function useProducts() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -18,8 +18,8 @@ export function useProducts() {
       
       const response = await apiService.getProducts({ limit: 100 });
       if (response.success && response.data && Array.isArray(response.data)) {
-        const mappedProducts = response.data.map(mapBackendToFrontend);
-        setProducts(mappedProducts);
+        // Data is already mapped by the API route, no need to map again
+        setProducts(response.data);
       } else {
         throw new Error('Invalid API response');
       }
@@ -44,9 +44,9 @@ export function useProducts() {
       const response = await apiService.createProduct(backendProduct);
       
       if (response.success && response.data) {
-        const newProduct = mapBackendToFrontend(response.data);
-        setProducts(prev => [...prev, newProduct]);
-        return newProduct;
+        // Data is already mapped by the API route
+        setProducts(prev => [...prev, response.data]);
+        return response.data;
       } else {
         throw new Error('Failed to create product');
       }
@@ -66,13 +66,13 @@ export function useProducts() {
       const response = await apiService.updateProduct(updatedProduct.id, backendProduct);
       
       if (response.success && response.data) {
-        const mappedProduct = mapBackendToFrontend(response.data);
+        // Data is already mapped by the API route
         setProducts(prev => 
           prev.map(product => 
-            product.id === updatedProduct.id ? mappedProduct : product
+            product.id === updatedProduct.id ? response.data : product
           )
         );
-        return mappedProduct;
+        return response.data;
       } else {
         throw new Error('Failed to update product');
       }

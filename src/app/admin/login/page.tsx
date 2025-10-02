@@ -27,11 +27,8 @@ export default function AdminLoginPage() {
       const response = await apiService.login(formData.email, formData.password);
       
       if (response.success && response.token) {
-        // Store token in localStorage
         localStorage.setItem('token', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
-        
-        // Redirect to admin dashboard
         router.push('/admin');
       } else {
         setError('Login failed. Please check your credentials.');

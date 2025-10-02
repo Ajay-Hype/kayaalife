@@ -33,6 +33,8 @@ export default function Home() {
   const featuredProducts = products.slice(0, 8);
   const bestSellers = products.filter(p => p.rating >= 4.5).slice(0, 6);
   
+  console.log('Homepage products:', products.length, 'Featured:', featuredProducts.length, 'Best sellers:', bestSellers.length);
+  
   // Categories are now handled by the DynamicCategoriesGrid component
   
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
@@ -138,11 +140,15 @@ export default function Home() {
               <p className="text-red-500 mb-4">Failed to load products: {productsError}</p>
               <p className="text-gray-500">Please check that the backend server is running.</p>
             </div>
-          ) : (
+          ) : featuredProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {featuredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">No products available</p>
             </div>
           )}
         </div>
@@ -172,11 +178,15 @@ export default function Home() {
               <p className="text-red-500 mb-4">Failed to load products: {productsError}</p>
               <p className="text-gray-500">Please check that the backend server is running.</p>
             </div>
-          ) : (
+          ) : bestSellers.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {bestSellers.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">No best sellers available</p>
             </div>
           )}
         </div>

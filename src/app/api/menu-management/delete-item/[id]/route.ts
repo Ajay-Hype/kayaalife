@@ -2,15 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5001';
 
-export async function GET(request: NextRequest) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { searchParams } = new URL(request.url);
-    const queryString = searchParams.toString();
-    
     const backendResponse = await fetch(
-      `${BACKEND_URL}/api/products${queryString ? `?${queryString}` : ''}`,
+      `${BACKEND_URL}/api/menu-management/delete-item/${params.id}`,
       {
-        method: 'GET',
+        method: 'DELETE',
         headers: {
           ...(request.headers.get('authorization') && {
             authorization: request.headers.get('authorization')!,
@@ -25,8 +22,12 @@ export async function GET(request: NextRequest) {
       status: backendResponse.status,
     });
   } catch (error) {
+    console.error('Error proxying delete item request:', error);
     return NextResponse.json(
-      { success: false, message: 'Backend not available', data: [] },
+      {
+        success: false,
+        message: 'Internal server error',
+      },
       { status: 500 }
     );
   }

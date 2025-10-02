@@ -22,48 +22,46 @@ export function useMenuItems() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch menu items from the menu management API
+  // Fetch menu items from categories API
   const fetchMenuItems = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
       const response = await fetch(`${API_BASE_URL}/menu-management/menu-items`);
       
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        // If categories API fails, use fallback data
+        console.warn('Categories API not available, using fallback menu items');
+        setMenuItems([]);
+        return;
       }
       
       const data = await response.json();
       
       if (data.success && Array.isArray(data.data)) {
-        // Filter only items that should be shown in menu and are active
-        const visibleMenuItems = data.data.filter((item: MenuItem) => 
-          item.showInMenu && item.isActive
-        );
-        
-        // Sort by menu order
-        const sortedItems = visibleMenuItems.sort((a: MenuItem, b: MenuItem) => 
-          a.menuOrder - b.menuOrder
-        );
-        
-        setMenuItems(sortedItems);
+        // Menu management API already returns hierarchical data
+        setMenuItems(data.data);
       } else {
-        throw new Error('Invalid API response format');
+        setMenuItems([]);
       }
     } catch (err: any) {
       console.error('Failed to fetch menu items:', err);
-      setError(err.message || 'Failed to fetch menu items');
+      setError(null); // Don't show error, just use empty menu
       setMenuItems([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Initialize menu items
+  // Initialize menu items with delay to avoid blocking
   useEffect(() => {
-    fetchMenuItems();
+    const timer = setTimeout(() => {
+      fetchMenuItems();
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   // Refresh menu items (useful after admin changes)

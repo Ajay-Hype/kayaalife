@@ -98,12 +98,7 @@ export default function AdvancedDataTable<T extends { id: string | number }>({
   subtitle
 }: AdvancedDataTableProps<T>) {
   
-  console.log('📊 ADVANCED DATA TABLE PROPS:', {
-    dataCount: data.length,
-    rowActionsCount: rowActions.length,
-    hasOnRowAction: !!onRowAction,
-    rowActions: rowActions.map(r => r.id)
-  });
+
   const [selectedItems, setSelectedItems] = useState<Set<string | number>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
@@ -342,7 +337,7 @@ export default function AdvancedDataTable<T extends { id: string | number }>({
 
       {/* Table */}
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
+        <table className="min-w-full divide-y divide-gray-200" style={{ minWidth: '800px' }}>
           <thead className="bg-gray-50">
             <tr>
               {selectable && (
@@ -376,7 +371,7 @@ export default function AdvancedDataTable<T extends { id: string | number }>({
                 </th>
               ))}
               {rowActions.length > 0 && (
-                <th className="w-32 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="sticky right-0 bg-gray-50 w-32 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider border-l border-gray-200">
                   Actions
                 </th>
               )}
@@ -384,7 +379,7 @@ export default function AdvancedDataTable<T extends { id: string | number }>({
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {loading ? (
-              <tr>
+              <tr key="loading">
                 <td colSpan={columns.length + (selectable ? 1 : 0) + (rowActions.length > 0 ? 1 : 0)} className="px-6 py-4 text-center">
                   <div className="flex justify-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -392,14 +387,14 @@ export default function AdvancedDataTable<T extends { id: string | number }>({
                 </td>
               </tr>
             ) : processedData.length === 0 ? (
-              <tr>
+              <tr key="no-data">
                 <td colSpan={columns.length + (selectable ? 1 : 0) + (rowActions.length > 0 ? 1 : 0)} className="px-6 py-4 text-center">
                   {emptyState || <p className="text-gray-500">No data available</p>}
                 </td>
               </tr>
             ) : (
               processedData.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50">
+                <tr key={item.id || item._id || Math.random()} className="hover:bg-gray-50">
                   {selectable && (
                     <td className="px-6 py-4">
                       <input
@@ -425,16 +420,12 @@ export default function AdvancedDataTable<T extends { id: string | number }>({
                     </td>
                   ))}
                   {rowActions.length > 0 && (
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      {console.log('🛠️ ROW ACTIONS DEBUG:', { rowActionsCount: rowActions.length, hasOnRowAction: !!onRowAction, itemId: item.id })}
+                    <td className="sticky right-0 bg-white px-6 py-4 whitespace-nowrap text-right text-sm font-medium border-l border-gray-200">
                       <div className="flex justify-end space-x-2">
                         {rowActions.map((action) => (
                           <button
                             key={action.id}
-                            onClick={() => {
-                              console.log('💪 BUTTON CLICKED DIRECTLY:', { actionId: action.id, itemId: item.id });
-                              onRowAction?.(action.id, item);
-                            }}
+                            onClick={() => onRowAction?.(action.id, item)}
                             className={`p-1 rounded hover:bg-gray-100 ${
                               action.variant === 'danger' ? 'text-red-600 hover:text-red-900' :
                               action.variant === 'primary' ? 'text-blue-600 hover:text-blue-900' :

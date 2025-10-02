@@ -109,8 +109,8 @@ export function mapBackendToFrontend(backendProduct: BackendProduct): Product {
     brand: extractBrandFromName(backendProduct.name) || 'Unknown',
     image: generatePlaceholderImage(backendProduct.category),
     images: [generatePlaceholderImage(backendProduct.category)],
-    inStock: backendProduct.isActive && backendProduct.stock > 0,
-    stockCount: backendProduct.stock,
+    inStock: backendProduct.isActive,
+    stockCount: backendProduct.stock || 0,
     rating: backendProduct.averageRating || 0, // Use actual stored rating
     reviewCount: backendProduct.reviewCount || 0, // Use actual stored review count
     tags: backendProduct.tags || [],

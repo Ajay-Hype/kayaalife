@@ -270,19 +270,8 @@ export default function MenuManager({ onAddItem }: MenuManagerProps) {
     item.slug.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Flatten items for display (including children)
-  const flattenItems = (items: MenuItem[]): MenuItem[] => {
-    const result: MenuItem[] = [];
-    items.forEach(item => {
-      result.push(item);
-      if (item.children && item.children.length > 0) {
-        result.push(...flattenItems(item.children));
-      }
-    });
-    return result;
-  };
-
-  const displayItems = flattenItems(filteredItems);
+  // Don't flatten - show hierarchical structure
+  const displayItems = filteredItems;
 
   if (loading) {
     return (

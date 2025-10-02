@@ -47,7 +47,8 @@ export default function CategoriesPage() {
     description: '',
     image: '',
     isActive: true,
-    sortOrder: 0
+    sortOrder: 0,
+    parentId: ''
   });
 
   // Fetch categories from backend
@@ -220,7 +221,8 @@ export default function CategoriesPage() {
           description: category.description,
           image: category.image || '',
           isActive: category.isActive,
-          sortOrder: category.sortOrder
+          sortOrder: category.sortOrder,
+          parentId: category.parentId || ''
         });
         setCategoryModal(true);
         break;
@@ -314,7 +316,8 @@ export default function CategoriesPage() {
       description: '',
       image: '',
       isActive: true,
-      sortOrder: categories.length
+      sortOrder: categories.length,
+      parentId: ''
     });
     setCategoryModal(true);
   }, [categories.length]);
@@ -342,7 +345,8 @@ export default function CategoriesPage() {
         description: '',
         image: '',
         isActive: true,
-        sortOrder: 0
+        sortOrder: 0,
+        parentId: ''
       });
     } catch (err) {
       console.error('Failed to save category:', err);
@@ -521,6 +525,25 @@ export default function CategoriesPage() {
                   className="admin-input admin-field-bg w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
                   placeholder="https://example.com/image.jpg"
                 />
+              </div>
+
+              <div>
+                <label className="admin-text block text-sm font-medium mb-1">
+                  Parent Category
+                </label>
+                <select
+                  name="parentId"
+                  value={formData.parentId}
+                  onChange={handleInputChange}
+                  className="admin-input admin-field-bg w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+                >
+                  <option value="">None (Main Category)</option>
+                  {categories.map(cat => (
+                    <option key={cat._id} value={cat._id}>
+                      {cat.parentId ? `└─ ${cat.name}` : cat.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>

@@ -17,8 +17,10 @@ interface ProductModalProps {
 export default function ProductModal({ isOpen, onClose, onSave, product, isSubmitting = false }: ProductModalProps) {
   console.log('ProductModal rendered with:', { isOpen, product: product?.name });
   
-  const { categories } = useCategories();
+  const { categories, loading: categoriesLoading } = useCategories();
   const activeCategories = categories.filter(cat => cat.isActive);
+  
+  console.log('Categories in ProductModal:', categories.length, 'Active:', activeCategories.length);
   
   const [formData, setFormData] = useState<Partial<Product>>({
     name: '',
@@ -249,8 +251,9 @@ export default function ProductModal({ isOpen, onClose, onSave, product, isSubmi
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="admin-modal bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto" data-admin-modal>
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
+      <div className="min-h-full flex items-center justify-center p-4">
+        <div className="admin-modal bg-white rounded-lg max-w-4xl w-full max-h-[90vh] shadow-xl" data-admin-modal>
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="admin-text text-xl font-semibold">
             {product ? 'Edit Product' : 'Add New Product'}
@@ -263,7 +266,8 @@ export default function ProductModal({ isOpen, onClose, onSave, product, isSubmi
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <div className="max-h-[calc(90vh-8rem)] overflow-y-auto">
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Basic Info */}
             <div className="space-y-4">
@@ -306,11 +310,17 @@ export default function ProductModal({ isOpen, onClose, onSave, product, isSubmi
                   required
                   className="admin-input admin-field-bg w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors"
                 >
-                  {activeCategories.map(cat => (
-                    <option key={cat._id} value={cat.name}>
-                      {cat.name}
-                    </option>
-                  ))}
+                  {categoriesLoading ? (
+                    <option>Loading categories...</option>
+                  ) : activeCategories.length > 0 ? (
+                    activeCategories.map(cat => (
+                      <option key={cat._id} value={cat.name}>
+                        {cat.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="Skincare">Skincare</option>
+                  )}
                 </select>
               </div>
 
@@ -604,6 +614,8 @@ export default function ProductModal({ isOpen, onClose, onSave, product, isSubmi
             </button>
           </div>
         </form>
+        </div>
+        </div>
       </div>
     </div>
   );

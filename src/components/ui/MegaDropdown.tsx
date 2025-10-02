@@ -86,9 +86,9 @@ export default function MegaDropdown({ category, isLoading }: MegaDropdownProps)
             {/* Submenu grid */}
             <div className="p-6">
               <div className={`grid ${
-                category.children.length > 4 ? 'grid-cols-2' : 'grid-cols-1'
+                (category.children?.length || 0) > 4 ? 'grid-cols-2' : 'grid-cols-1'
               } gap-6`}>
-                {category.children.map((child) => (
+                {category.children?.map((child) => (
                   <div key={child._id} className="space-y-2">
                     <Link 
                       href={`/${child.slug}`} 
